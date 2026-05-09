@@ -104,56 +104,9 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers(HttpMethod.POST,
-                        "/api/v1/sedes"
-                    ).hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.POST,
-                        "/api/v1/materiales",
-                        "/api/v1/lotes",
-                        "/api/v1/entregas",
-                        "/api/v1/movimientos/ajuste"
-                    ).hasAnyRole("ADMIN", "ALMACEN")
-                    .requestMatchers(HttpMethod.POST,
-                        "/api/v1/solicitudes"
-                    ).hasAnyRole("ADMIN", "SEDE")
-                    .requestMatchers(HttpMethod.PUT,
-                        "/api/v1/sedes/{id}"
-                    ).hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.PUT,
-                        "/api/v1/materiales/{id}",
-                        "/api/v1/lotes/{id}"
-                    ).hasAnyRole("ADMIN", "ALMACEN")
-                    .requestMatchers(HttpMethod.PUT,
-                        "/api/v1/solicitudes/{id}"
-                    ).hasAnyRole("ADMIN", "SEDE")
-                    .requestMatchers(HttpMethod.GET,
-                        "/api/v1/movimientos",
-                        "/api/v1/movimientos/{id}"
-                    ).hasAnyRole("ADMIN", "ALMACEN")
-                    .requestMatchers(HttpMethod.PATCH,
-                        "/api/v1/entregas/{id}/despachar",
-                        "/api/v1/entregas/{id}/en-ruta",
-                        "/api/v1/entregas/{id}/registrar-recepcion"
-                    ).hasAnyRole("ADMIN", "ALMACEN")
-                    .requestMatchers(HttpMethod.PATCH,
-                        "/api/v1/lotes/{id}/fuera-vigencia"
-                    ).hasAnyRole("ADMIN", "ALMACEN")
-                    .requestMatchers(HttpMethod.PATCH,
-                        "/api/v1/solicitudes/{id}/aprobar",
-                        "/api/v1/solicitudes/{id}/observar"
-                    ).hasAnyRole("ADMIN", "ALMACEN")
-                    .requestMatchers(HttpMethod.PATCH,
-                        "/api/v1/solicitudes/{id}/enviar"
-                    ).hasAnyRole("ADMIN", "SEDE")
-                    .requestMatchers(HttpMethod.PATCH,
-                        "/api/v1/solicitudes/{id}/cancelar"
-                    ).hasAnyRole("ADMIN", "SEDE")
                     .requestMatchers(
-                        "/api/v1/auth/**",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**")
+                        "/shaddai/api/auth/**")
                     .permitAll()
-
                     .anyRequest().authenticated()
             );
 

@@ -1,4 +1,4 @@
-package shaddai.backend.dtos;
+package shaddai.backend.dtos.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

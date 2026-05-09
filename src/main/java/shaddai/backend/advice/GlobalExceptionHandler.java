@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import shaddai.backend.dtos.ErrorResponseDTO;
 import shaddai.backend.exceptions.UserNameAlreadyExistsException;
+import shaddai.backend.exceptions.UserNotFoundException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,5 +29,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleUserNameAlreadyExists(UserNameAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponseDTO("USERNAME_CONFLICT", ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUserNotFound(UserNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("USER_NOT_FOUND", ex.getMessage(), null));
     }
 }

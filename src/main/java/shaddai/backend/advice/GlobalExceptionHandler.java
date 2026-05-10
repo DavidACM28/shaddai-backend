@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import shaddai.backend.dtos.ErrorResponseDTO;
 import shaddai.backend.exceptions.CategoryAlreadyExistsException;
+import shaddai.backend.exceptions.CategoryNotFoundException;
 import shaddai.backend.exceptions.UserNameAlreadyExistsException;
 import shaddai.backend.exceptions.UserNotFoundException;
 
@@ -42,5 +43,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleCategoryAlreadyExists(CategoryAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponseDTO("CATEGORY_NAME_CONFLICT", ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleCategoryNotFound(CategoryNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("CATEGORY_NOT_FOUND", ex.getMessage(), null));
     }
 }

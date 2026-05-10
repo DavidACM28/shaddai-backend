@@ -1,10 +1,13 @@
 package shaddai.backend.services;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import shaddai.backend.dtos.categoria.CategoriaResponse;
 import shaddai.backend.dtos.categoria.CrearCategoriaDTO;
-import shaddai.backend.dtos.categoria.CrearCategoriaResponse;
+import shaddai.backend.dtos.categoria.EditarCategoriaDTO;
 import shaddai.backend.entities.CategoriaEntity;
 import shaddai.backend.exceptions.CategoryAlreadyExistsException;
+import shaddai.backend.exceptions.CategoryNotFoundException;
 import shaddai.backend.repositories.CategoriaRepository;
 
 @Service
@@ -16,7 +19,8 @@ public class CategoriaService {
         this.categoriaRepository = categoriaRepository;
     }
 
-    public CrearCategoriaResponse crear(CrearCategoriaDTO dto) {
+    @Transactional
+    public CategoriaResponse crear(CrearCategoriaDTO dto) {
         if (categoriaRepository.existsByNombre(dto.getNombre())) {
             throw new CategoryAlreadyExistsException(dto.getNombre());
         }
@@ -24,6 +28,18 @@ public class CategoriaService {
         categoria.setNombre(dto.getNombre());
         categoria.setActivo(true);
         categoria = categoriaRepository.save(categoria);
-        return new CrearCategoriaResponse(categoria.getId(), categoria.getNombre(), categoria.isActivo());
+        return new CategoriaResponse(categoria.getId(), categoria.getNombre(), categoria.isActivo());
+    }
+
+    @Transactional
+    public CategoriaResponse editar(EditarCategoriaDTO dto, Long id) {
+        CategoriaEntity categoria = categoriaRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+        if (categoriaRepository.existsByNombre(dto.getNombre()) && !dto.getNombre().equals(categoria.getNombre())) {
+            throw new CategoryAlreadyExistsException(dto.getNombre());
+        }
+        categoria.setNombre(dto.getNombre());
+        categoria.setActivo(dto.isActivo());
+        categoria = categoriaRepository.save(categoria);
+        return new CategoriaResponse(categoria.getId(), categoria.getNombre(), categoria.isActivo());
     }
 }

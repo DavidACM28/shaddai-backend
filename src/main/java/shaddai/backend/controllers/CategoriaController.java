@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import shaddai.backend.dtos.categoria.CrearCategoriaDTO;
 import shaddai.backend.dtos.categoria.CategoriaResponse;
 import shaddai.backend.dtos.categoria.EditarCategoriaDTO;
+import shaddai.backend.entities.CategoriaEntity;
 import shaddai.backend.services.CategoriaService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/shaddai/api/categoria")
@@ -25,4 +28,20 @@ public class CategoriaController {
     public ResponseEntity<CategoriaResponse> editar (@Valid @RequestBody EditarCategoriaDTO dto, @PathVariable Long id) {
         return ResponseEntity.ok(categoriaService.editar(dto, id));
     }
+
+    @GetMapping("/categorias")
+    public ResponseEntity<List<CategoriaEntity>> findAll() {
+        return ResponseEntity.ok().body(categoriaService.findAll());
+    }
+
+    @GetMapping("/categorias/activas")
+    public ResponseEntity<List<CategoriaEntity>> activas() {
+        return ResponseEntity.ok().body(categoriaService.findAllActivas());
+    }
+
+    @GetMapping("/categorias/inactivas")
+    public ResponseEntity<List<CategoriaEntity>> inactivas() {
+        return ResponseEntity.ok().body(categoriaService.findAllInactivas());
+    }
+
 }

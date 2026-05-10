@@ -10,6 +10,8 @@ import shaddai.backend.exceptions.CategoryAlreadyExistsException;
 import shaddai.backend.exceptions.CategoryNotFoundException;
 import shaddai.backend.repositories.CategoriaRepository;
 
+import java.util.List;
+
 @Service
 public class CategoriaService {
 
@@ -41,5 +43,20 @@ public class CategoriaService {
         categoria.setActivo(dto.isActivo());
         categoria = categoriaRepository.save(categoria);
         return new CategoriaResponse(categoria.getId(), categoria.getNombre(), categoria.isActivo());
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoriaEntity> findAll() {
+        return categoriaRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoriaEntity> findAllActivas() {
+        return categoriaRepository.findByActivo(true);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoriaEntity> findAllInactivas() {
+        return categoriaRepository.findByActivo(false);
     }
 }

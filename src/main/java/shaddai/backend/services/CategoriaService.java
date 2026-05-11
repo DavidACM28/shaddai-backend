@@ -37,7 +37,7 @@ public class CategoriaService {
 
     @Transactional
     public CategoriaResponse editar(EditarCategoriaDTO dto, Long id) {
-        CategoriaEntity categoria = categoriaRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+        CategoriaEntity categoria = categoriaRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id.toString()));
         if (categoriaRepository.existsByNombre(dto.getNombre()) && !dto.getNombre().equals(categoria.getNombre())) {
             throw new CategoryAlreadyExistsException(dto.getNombre());
         }
@@ -65,7 +65,7 @@ public class CategoriaService {
     @Transactional
     public void eliminar(Long id) {
         if (!categoriaRepository.existsById(id)) {
-            throw new CategoryNotFoundException(id);
+            throw new CategoryNotFoundException(id.toString());
         }
         categoriaRepository.deleteById(id);
     }
@@ -73,5 +73,15 @@ public class CategoriaService {
     @Transactional(readOnly = true)
     public Page<CategoriaEntity> findAllPage(Pageable pageable) {
         return categoriaRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public CategoriaEntity findById(Long id) {
+        return categoriaRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id.toString()));
+    }
+
+    @Transactional(readOnly = true)
+    public CategoriaEntity findByNombre(String nombre) {
+        return categoriaRepository.findByNombreIgnoreCase(nombre).orElseThrow(() -> new CategoryNotFoundException(nombre));
     }
 }

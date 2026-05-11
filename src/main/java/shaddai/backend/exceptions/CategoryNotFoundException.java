@@ -1,7 +1,7 @@
 package shaddai.backend.exceptions;
 
 public class CategoryNotFoundException extends RuntimeException {
-    public CategoryNotFoundException(Long id) {
-        super("Category id " + id + " not found");
+    public CategoryNotFoundException(String id) {
+        super("Category " + id + " not found");
     }
 }

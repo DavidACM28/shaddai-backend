@@ -15,4 +15,6 @@ public interface CategoriaRepository extends JpaRepository<CategoriaEntity, Long
     Optional<CategoriaEntity> findByNombre(String nombre);
 
     List<CategoriaEntity> findByActivo(boolean activo);
+
+    Optional<CategoriaEntity> findByNombreIgnoreCase(String nombre);
 }

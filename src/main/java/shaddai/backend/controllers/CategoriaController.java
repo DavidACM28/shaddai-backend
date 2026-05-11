@@ -57,4 +57,14 @@ public class CategoriaController {
         final PageRequest pageable = PageRequest.of(page, 10);
         return ResponseEntity.ok().body(categoriaService.findAllPage(pageable));
     }
+
+    @GetMapping("/categoria/id/{id}")
+    public ResponseEntity<CategoriaEntity> findById(@PathVariable Long id) {
+        return ResponseEntity.ok().body(categoriaService.findById(id));
+    }
+
+    @GetMapping("/categoria/nombre/{nombre}")
+    public ResponseEntity<CategoriaEntity> findByNombre(@PathVariable String nombre) {
+        return ResponseEntity.ok().body(categoriaService.findByNombre(nombre));
+    }
 }

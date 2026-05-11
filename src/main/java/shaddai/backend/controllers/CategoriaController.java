@@ -67,4 +67,14 @@ public class CategoriaController {
     public ResponseEntity<CategoriaEntity> findByNombre(@PathVariable String nombre) {
         return ResponseEntity.ok().body(categoriaService.findByNombre(nombre));
     }
+
+    @PatchMapping("/activar/{id}")
+    public ResponseEntity<CategoriaEntity> activar(@PathVariable Long id) {
+        return ResponseEntity.ok().body(categoriaService.activar(id));
+    }
+
+    @PatchMapping("/desactivar/{id}")
+    public ResponseEntity<CategoriaEntity> desactivar(@PathVariable Long id) {
+        return ResponseEntity.ok().body(categoriaService.desactivar(id));
+    }
 }

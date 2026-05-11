@@ -84,4 +84,18 @@ public class CategoriaService {
     public CategoriaEntity findByNombre(String nombre) {
         return categoriaRepository.findByNombreIgnoreCase(nombre).orElseThrow(() -> new CategoryNotFoundException(nombre));
     }
+
+    @Transactional
+    public CategoriaEntity activar(Long id) {
+        CategoriaEntity categoria = categoriaRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id.toString()));
+        categoria.setActivo(true);
+        return categoria;
+    }
+
+    @Transactional
+    public CategoriaEntity desactivar(Long id) {
+        CategoriaEntity categoria = categoriaRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id.toString()));
+        categoria.setActivo(false);
+        return categoria;
+    }
 }

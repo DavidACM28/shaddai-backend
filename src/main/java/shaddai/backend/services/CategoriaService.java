@@ -1,5 +1,7 @@
 package shaddai.backend.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shaddai.backend.dtos.categoria.CategoriaResponse;
@@ -66,5 +68,10 @@ public class CategoriaService {
             throw new CategoryNotFoundException(id);
         }
         categoriaRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CategoriaEntity> findAllPage(Pageable pageable) {
+        return categoriaRepository.findAll(pageable);
     }
 }

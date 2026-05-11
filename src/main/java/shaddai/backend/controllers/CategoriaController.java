@@ -2,6 +2,8 @@ package shaddai.backend.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shaddai.backend.dtos.categoria.CategoriaResponse;
@@ -48,5 +50,11 @@ public class CategoriaController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         categoriaService.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/categorias/{page}")
+    public ResponseEntity<Page<CategoriaEntity>> findAll(@PathVariable int page) {
+        final PageRequest pageable = PageRequest.of(page, 10);
+        return ResponseEntity.ok().body(categoriaService.findAllPage(pageable));
     }
 }

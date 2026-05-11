@@ -59,4 +59,12 @@ public class CategoriaService {
     public List<CategoriaEntity> findAllInactivas() {
         return categoriaRepository.findByActivo(false);
     }
+
+    @Transactional
+    public void eliminar(Long id) {
+        if (!categoriaRepository.existsById(id)) {
+            throw new CategoryNotFoundException(id);
+        }
+        categoriaRepository.deleteById(id);
+    }
 }

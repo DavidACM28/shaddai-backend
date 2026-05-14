@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shaddai.backend.dtos.producto.CrearProductoDTO;
 import shaddai.backend.dtos.producto.EditarProductoDTO;
+import shaddai.backend.dtos.producto.ProductoMasVendidoDTO;
 import shaddai.backend.entities.ProductoEntity;
 import shaddai.backend.services.ProductoService;
 
@@ -33,5 +34,10 @@ public class ProductoController {
             @RequestParam(required = false) Long productoId, @RequestParam(required = false) Long categoriaId,
             @RequestParam(required = false) String nombre, @RequestParam(required = false) Boolean activo) {
         return ResponseEntity.ok().body(productoService.findByFilters(productoId, categoriaId, nombre, activo));
+    }
+
+    @GetMapping("/mas-vendidos")
+    public ResponseEntity<List<ProductoMasVendidoDTO>> findProductosMasVendidos() {
+        return ResponseEntity.ok().body(productoService.findProductosMasVendidos());
     }
 }

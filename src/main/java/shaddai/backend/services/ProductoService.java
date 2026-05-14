@@ -1,16 +1,18 @@
 package shaddai.backend.services;
 
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shaddai.backend.dtos.producto.CrearProductoDTO;
 import shaddai.backend.dtos.producto.EditarProductoDTO;
+import shaddai.backend.dtos.producto.ProductoMasVendidoDTO;
 import shaddai.backend.entities.CategoriaEntity;
 import shaddai.backend.entities.ProductoEntity;
 import shaddai.backend.exceptions.CategoryNotFoundException;
 import shaddai.backend.exceptions.ProductNotFoundException;
 import shaddai.backend.repositories.CategoriaRepository;
+import shaddai.backend.repositories.DetalleVentaRepository;
 import shaddai.backend.repositories.ProductoRepository;
 
 import java.util.List;
@@ -20,10 +22,13 @@ public class ProductoService {
 
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
+    private final DetalleVentaRepository detalleVentaRepository;
 
-    public ProductoService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository) {
+    public ProductoService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
+                           DetalleVentaRepository detalleVentaRepository) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
+        this.detalleVentaRepository = detalleVentaRepository;
     }
 
     @Transactional
@@ -82,5 +87,9 @@ public class ProductoService {
         return productoRepository.findAll(specification);
     }
 
+    @Transactional(readOnly = true)
+    public List<ProductoMasVendidoDTO> findProductosMasVendidos() {
+        return detalleVentaRepository.findProductosMasVendidos(PageRequest.of(0, 6));
+    }
 
 }

@@ -13,13 +13,14 @@ import java.util.List;
 public interface DetalleVentaRepository extends JpaRepository<DetalleVentaEntity, Long> {
 
     @Query("""
-            SELECT
-                p.id AS id,
-                p.nombre AS nombre,
-                p.descripcion AS descripcion,
-                p.precio AS precio,
-                p.stock AS stock,
-                SUM(d.cantidad) AS cantidadVendida
+            SELECT new shaddai.backend.dtos.producto.ProductoMasVendidoDTO(
+                p.id,
+                p.nombre,
+                p.descripcion,
+                p.precio,
+                p.stock,
+                SUM(d.cantidad)
+            )
             FROM DetalleVentaEntity d
             JOIN d.producto p
             GROUP BY p.id, p.nombre, p.descripcion, p.precio, p.stock

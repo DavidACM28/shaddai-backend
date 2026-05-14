@@ -1,15 +1,18 @@
 package shaddai.backend.dtos.producto;
 
-public interface ProductoMasVendidoDTO {
-    Long getId();
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    String getNombre();
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProductoMasVendidoDTO {
 
-    String getDescripcion();
-
-    double getPrecio();
-
-    int getStock();
-
-    Long getCantidadVendida();
+    private Long id;
+    private String nombre;
+    private String descripcion;
+    private double precio;
+    private int stock;
+    private Long cantidadVendida;
 }

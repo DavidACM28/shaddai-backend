@@ -92,4 +92,18 @@ public class ProductoService {
         return detalleVentaRepository.findProductosMasVendidos(PageRequest.of(0, 6));
     }
 
+    @Transactional
+    public ProductoEntity activar(Long id) {
+        ProductoEntity producto = productoRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id.toString()));
+        producto.setActivo(true);
+        return productoRepository.save(producto);
+    }
+
+    @Transactional
+    public ProductoEntity desactivar(Long id) {
+        ProductoEntity producto = productoRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id.toString()));
+        producto.setActivo(false);
+        return productoRepository.save(producto);
+    }
+
 }

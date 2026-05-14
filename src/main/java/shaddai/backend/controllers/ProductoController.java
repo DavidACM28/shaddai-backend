@@ -40,4 +40,14 @@ public class ProductoController {
     public ResponseEntity<List<ProductoMasVendidoDTO>> findProductosMasVendidos() {
         return ResponseEntity.ok().body(productoService.findProductosMasVendidos());
     }
+
+    @PatchMapping("/activar/{id}")
+    public ResponseEntity<ProductoEntity> activar(@PathVariable Long id) {
+        return ResponseEntity.ok().body(productoService.activar(id));
+    }
+
+    @PatchMapping("/desactivar/{id}")
+    public ResponseEntity<ProductoEntity> desactivar(@PathVariable Long id) {
+        return ResponseEntity.ok().body(productoService.desactivar(id));
+    }
 }

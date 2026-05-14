@@ -48,18 +48,24 @@ public class CategoriaService {
     }
 
     @Transactional(readOnly = true)
-    public List<CategoriaEntity> findAll() {
-        return categoriaRepository.findAll();
+    public List<CategoriaResponse> findAll() {
+        return categoriaRepository.findAll().stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<CategoriaEntity> findAllActivas() {
-        return categoriaRepository.findByActivo(true);
+    public List<CategoriaResponse> findAllActivas() {
+        return categoriaRepository.findByActivo(true).stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<CategoriaEntity> findAllInactivas() {
-        return categoriaRepository.findByActivo(false);
+    public List<CategoriaResponse> findAllInactivas() {
+        return categoriaRepository.findByActivo(false).stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @Transactional
@@ -71,31 +77,35 @@ public class CategoriaService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CategoriaEntity> findAllPage(Pageable pageable) {
-        return categoriaRepository.findAll(pageable);
+    public Page<CategoriaResponse> findAllPage(Pageable pageable) {
+        return categoriaRepository.findAll(pageable).map(this::toResponse);
     }
 
     @Transactional(readOnly = true)
-    public CategoriaEntity findById(Long id) {
-        return categoriaRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id.toString()));
+    public CategoriaResponse findById(Long id) {
+        return toResponse(categoriaRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id.toString())));
     }
 
     @Transactional(readOnly = true)
-    public CategoriaEntity findByNombre(String nombre) {
-        return categoriaRepository.findByNombreIgnoreCase(nombre).orElseThrow(() -> new CategoryNotFoundException(nombre));
+    public CategoriaResponse findByNombre(String nombre) {
+        return toResponse(categoriaRepository.findByNombreIgnoreCase(nombre).orElseThrow(() -> new CategoryNotFoundException(nombre)));
     }
 
     @Transactional
-    public CategoriaEntity activar(Long id) {
+    public CategoriaResponse activar(Long id) {
         CategoriaEntity categoria = categoriaRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id.toString()));
         categoria.setActivo(true);
-        return categoria;
+        return toResponse(categoria);
     }
 
     @Transactional
-    public CategoriaEntity desactivar(Long id) {
+    public CategoriaResponse desactivar(Long id) {
         CategoriaEntity categoria = categoriaRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id.toString()));
         categoria.setActivo(false);
-        return categoria;
+        return toResponse(categoria);
+    }
+
+    private CategoriaResponse toResponse(CategoriaEntity categoria) {
+        return new CategoriaResponse(categoria.getId(), categoria.getNombre(), categoria.isActivo());
     }
 }

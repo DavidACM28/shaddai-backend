@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class CategoriaResponse {
     private Long id;
     private String nombre;
-    private boolean estado;
+    private boolean activo;
 }

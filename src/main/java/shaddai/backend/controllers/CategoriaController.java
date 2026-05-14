@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import shaddai.backend.dtos.categoria.CategoriaResponse;
 import shaddai.backend.dtos.categoria.CrearCategoriaDTO;
 import shaddai.backend.dtos.categoria.EditarCategoriaDTO;
-import shaddai.backend.entities.CategoriaEntity;
 import shaddai.backend.services.CategoriaService;
 
 import java.util.List;
@@ -32,17 +31,17 @@ public class CategoriaController {
     }
 
     @GetMapping("/categorias")
-    public ResponseEntity<List<CategoriaEntity>> findAll() {
+    public ResponseEntity<List<CategoriaResponse>> findAll() {
         return ResponseEntity.ok().body(categoriaService.findAll());
     }
 
     @GetMapping("/categorias/activas")
-    public ResponseEntity<List<CategoriaEntity>> activas() {
+    public ResponseEntity<List<CategoriaResponse>> activas() {
         return ResponseEntity.ok().body(categoriaService.findAllActivas());
     }
 
     @GetMapping("/categorias/inactivas")
-    public ResponseEntity<List<CategoriaEntity>> inactivas() {
+    public ResponseEntity<List<CategoriaResponse>> inactivas() {
         return ResponseEntity.ok().body(categoriaService.findAllInactivas());
     }
 
@@ -53,28 +52,28 @@ public class CategoriaController {
     }
 
     @GetMapping("/categorias/{page}")
-    public ResponseEntity<Page<CategoriaEntity>> findAll(@PathVariable int page) {
+    public ResponseEntity<Page<CategoriaResponse>> findAll(@PathVariable int page) {
         final PageRequest pageable = PageRequest.of(page, 10);
         return ResponseEntity.ok().body(categoriaService.findAllPage(pageable));
     }
 
     @GetMapping("/categoria/id/{id}")
-    public ResponseEntity<CategoriaEntity> findById(@PathVariable Long id) {
+    public ResponseEntity<CategoriaResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok().body(categoriaService.findById(id));
     }
 
     @GetMapping("/categoria/nombre/{nombre}")
-    public ResponseEntity<CategoriaEntity> findByNombre(@PathVariable String nombre) {
+    public ResponseEntity<CategoriaResponse> findByNombre(@PathVariable String nombre) {
         return ResponseEntity.ok().body(categoriaService.findByNombre(nombre));
     }
 
     @PatchMapping("/activar/{id}")
-    public ResponseEntity<CategoriaEntity> activar(@PathVariable Long id) {
+    public ResponseEntity<CategoriaResponse> activar(@PathVariable Long id) {
         return ResponseEntity.ok().body(categoriaService.activar(id));
     }
 
     @PatchMapping("/desactivar/{id}")
-    public ResponseEntity<CategoriaEntity> desactivar(@PathVariable Long id) {
+    public ResponseEntity<CategoriaResponse> desactivar(@PathVariable Long id) {
         return ResponseEntity.ok().body(categoriaService.desactivar(id));
     }
 }

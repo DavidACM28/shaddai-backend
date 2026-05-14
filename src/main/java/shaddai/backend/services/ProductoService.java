@@ -4,9 +4,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shaddai.backend.dtos.categoria.CategoriaResponse;
 import shaddai.backend.dtos.producto.CrearProductoDTO;
 import shaddai.backend.dtos.producto.EditarProductoDTO;
 import shaddai.backend.dtos.producto.ProductoMasVendidoDTO;
+import shaddai.backend.dtos.producto.ProductoResponse;
 import shaddai.backend.entities.CategoriaEntity;
 import shaddai.backend.entities.ProductoEntity;
 import shaddai.backend.exceptions.CategoryNotFoundException;
@@ -32,7 +34,7 @@ public class ProductoService {
     }
 
     @Transactional
-    public ProductoEntity crear(CrearProductoDTO dto) {
+    public ProductoResponse crear(CrearProductoDTO dto) {
         CategoriaEntity categoria = new CategoriaEntity(3L, "Sin categoria", true);
         if (dto.getCategoria() != null) {
             categoria = categoriaRepository.findById(dto.getCategoria().getId()).orElseThrow(
@@ -46,11 +48,11 @@ public class ProductoService {
         producto.setCategoria((categoria));
         producto.setStock((dto.getStock() == null ? 0 : dto.getStock()));
         producto.setActivo(true);
-        return productoRepository.save(producto);
+        return toResponse(productoRepository.save(producto));
     }
 
     @Transactional
-    public ProductoEntity editar(Long id, EditarProductoDTO dto) {
+    public ProductoResponse editar(Long id, EditarProductoDTO dto) {
         ProductoEntity producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id.toString()));
         CategoriaEntity categoria = new CategoriaEntity(3L, "Sin categoria", true);
@@ -64,11 +66,11 @@ public class ProductoService {
         producto.setPrecio(dto.getPrecio());
         producto.setStock(dto.getStock());
         producto.setActivo(dto.getActivo());
-        return productoRepository.save(producto);
+        return toResponse(productoRepository.save(producto));
     }
 
     @Transactional(readOnly = true)
-    public List<ProductoEntity> findByFilters(Long productoId, Long categoriaId, String nombre, Boolean activo) {
+    public List<ProductoResponse> findByFilters(Long productoId, Long categoriaId, String nombre, Boolean activo) {
         Specification<ProductoEntity> specification = Specification.where((root, query, cb) -> cb.conjunction());
 
         if (productoId != null) {
@@ -84,7 +86,9 @@ public class ProductoService {
             specification = specification.and((root, query, cb) -> cb.equal(root.get("activo"), activo));
         }
 
-        return productoRepository.findAll(specification);
+        return productoRepository.findAll(specification).stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -93,17 +97,36 @@ public class ProductoService {
     }
 
     @Transactional
-    public ProductoEntity activar(Long id) {
+    public ProductoResponse activar(Long id) {
         ProductoEntity producto = productoRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id.toString()));
         producto.setActivo(true);
-        return productoRepository.save(producto);
+        return toResponse(productoRepository.save(producto));
     }
 
     @Transactional
-    public ProductoEntity desactivar(Long id) {
+    public ProductoResponse desactivar(Long id) {
         ProductoEntity producto = productoRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id.toString()));
         producto.setActivo(false);
-        return productoRepository.save(producto);
+        return toResponse(productoRepository.save(producto));
+    }
+
+    private ProductoResponse toResponse(ProductoEntity producto) {
+        CategoriaResponse categoria = null;
+        if (producto.getCategoria() != null) {
+            categoria = new CategoriaResponse(
+                    producto.getCategoria().getId(),
+                    producto.getCategoria().getNombre(),
+                    producto.getCategoria().isActivo());
+        }
+
+        return new ProductoResponse(
+                producto.getId(),
+                categoria,
+                producto.getNombre(),
+                producto.getDescripcion(),
+                producto.getPrecio(),
+                producto.getStock(),
+                producto.isActivo());
     }
 
 }

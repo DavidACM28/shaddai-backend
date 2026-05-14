@@ -87,6 +87,10 @@ public class CustomUsersDetailsService implements UserDetailsService {
         return new User(
             usuario.getUsername(),
             usuario.getPassword(),
+            usuario.isActivo(),
+            true,
+            true,
+            true,
             mapAuthorities(roles)
         );
     }

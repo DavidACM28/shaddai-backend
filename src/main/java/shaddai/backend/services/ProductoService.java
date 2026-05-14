@@ -1,5 +1,7 @@
 package shaddai.backend.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shaddai.backend.dtos.producto.CrearProductoDTO;
@@ -10,6 +12,8 @@ import shaddai.backend.exceptions.CategoryNotFoundException;
 import shaddai.backend.exceptions.ProductNotFoundException;
 import shaddai.backend.repositories.CategoriaRepository;
 import shaddai.backend.repositories.ProductoRepository;
+
+import java.util.List;
 
 @Service
 public class ProductoService {
@@ -24,9 +28,9 @@ public class ProductoService {
 
     @Transactional
     public ProductoEntity crear(CrearProductoDTO dto) {
-        CategoriaEntity categoria = null;
+        CategoriaEntity categoria = new CategoriaEntity(3L, "Sin categoria", true);
         if (dto.getCategoria() != null) {
-             categoria = categoriaRepository.findById(dto.getCategoria().getId()).orElseThrow(
+            categoria = categoriaRepository.findById(dto.getCategoria().getId()).orElseThrow(
                     () -> new CategoryNotFoundException(dto.getCategoria().getId().toString()));
         }
 
@@ -44,7 +48,7 @@ public class ProductoService {
     public ProductoEntity editar(Long id, EditarProductoDTO dto) {
         ProductoEntity producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id.toString()));
-        CategoriaEntity categoria = null;
+        CategoriaEntity categoria = new CategoriaEntity(3L, "Sin categoria", true);
         if (dto.getCategoria() != null) {
             categoria = categoriaRepository.findById(dto.getCategoria().getId()).orElseThrow(
                     () -> new CategoryNotFoundException(dto.getCategoria().getId().toString()));
@@ -57,4 +61,26 @@ public class ProductoService {
         producto.setActivo(dto.getActivo());
         return productoRepository.save(producto);
     }
+
+    @Transactional(readOnly = true)
+    public List<ProductoEntity> findByFilters(Long productoId, Long categoriaId, String nombre, Boolean activo) {
+        Specification<ProductoEntity> specification = Specification.where((root, query, cb) -> cb.conjunction());
+
+        if (productoId != null) {
+            specification = specification.and((root, query, cb) -> cb.equal(root.get("id"), productoId));
+        }
+        if (categoriaId != null) {
+            specification = specification.and((root, query, cb) -> cb.equal(root.get("categoria").get("id"), categoriaId));
+        }
+        if (nombre != null) {
+            specification = specification.and((root, query, cb) -> cb.like(root.get("nombre"), "%" + nombre + "%"));
+        }
+        if (activo != null) {
+            specification = specification.and((root, query, cb) -> cb.equal(root.get("activo"), activo));
+        }
+
+        return productoRepository.findAll(specification);
+    }
+
+
 }

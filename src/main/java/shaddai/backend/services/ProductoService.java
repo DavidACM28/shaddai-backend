@@ -111,7 +111,7 @@ public class ProductoService {
     }
 
     private ProductoResponse toResponse(ProductoEntity producto) {
-        CategoriaResponse categoria = null;
+        CategoriaResponse categoria = new CategoriaResponse(3L, "Sin categoria", true);
         if (producto.getCategoria() != null) {
             categoria = new CategoriaResponse(
                     producto.getCategoria().getId(),

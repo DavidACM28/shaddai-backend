@@ -35,6 +35,7 @@ public class AuditoriaInventarioEntity {
 
     private int stockAntiguo;
     private int stockNuevo;
+    private String mensaje;
     private LocalDate fecha;
     private LocalTime hora;
 

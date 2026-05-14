@@ -53,4 +53,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponseDTO("PRODUCT_NOT_FOUND", ex.getMessage(), null));
     }
+
+    @ExceptionHandler(InvalidActionException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidAction(InvalidActionException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO("VALIDATION_ERROR", ex.getMessage(), null));
+    }
 }

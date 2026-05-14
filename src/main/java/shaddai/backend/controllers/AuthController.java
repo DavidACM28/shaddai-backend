@@ -15,7 +15,7 @@ import shaddai.backend.dtos.UsuarioDTO;
 import shaddai.backend.dtos.auth.LoginDTO;
 import shaddai.backend.dtos.auth.LoginResponse;
 import shaddai.backend.dtos.auth.RegisterDTO;
-import shaddai.backend.dtos.auth.RegisteResponse;
+import shaddai.backend.dtos.auth.RegisterResponse;
 import shaddai.backend.entities.UsuarioEntity;
 import shaddai.backend.security.JwtGenerador;
 import shaddai.backend.services.UsuarioService;
@@ -32,7 +32,7 @@ public class AuthController {
     private JwtGenerador jwtGenerador;
 
     @PostMapping("/register")
-    public ResponseEntity<RegisteResponse> register(@Valid @RequestBody RegisterDTO dto) {
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterDTO dto) {
         return ResponseEntity.ok(usuarioService.register(dto));
     }
 

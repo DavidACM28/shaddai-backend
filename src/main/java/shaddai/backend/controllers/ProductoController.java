@@ -3,11 +3,9 @@ package shaddai.backend.controllers;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import shaddai.backend.dtos.producto.CrearProductoDTO;
+import shaddai.backend.dtos.producto.EditarProductoDTO;
 import shaddai.backend.entities.ProductoEntity;
 import shaddai.backend.services.ProductoService;
 import shaddai.backend.services.UsuarioService;
@@ -22,5 +20,10 @@ public class ProductoController {
     @PostMapping("/crear")
     public ResponseEntity<ProductoEntity> crear(@Valid @RequestBody CrearProductoDTO dto) {
         return ResponseEntity.ok().body(productoService.crear(dto));
+    }
+
+    @PutMapping("/editar/{id}")
+    public ResponseEntity<ProductoEntity> editar(@PathVariable Long id, @Valid @RequestBody EditarProductoDTO dto) {
+        return ResponseEntity.ok().body(productoService.editar(id, dto));
     }
 }

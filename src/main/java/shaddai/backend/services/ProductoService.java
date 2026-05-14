@@ -3,9 +3,11 @@ package shaddai.backend.services;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shaddai.backend.dtos.producto.CrearProductoDTO;
+import shaddai.backend.dtos.producto.EditarProductoDTO;
 import shaddai.backend.entities.CategoriaEntity;
 import shaddai.backend.entities.ProductoEntity;
 import shaddai.backend.exceptions.CategoryNotFoundException;
+import shaddai.backend.exceptions.ProductNotFoundException;
 import shaddai.backend.repositories.CategoriaRepository;
 import shaddai.backend.repositories.ProductoRepository;
 
@@ -39,7 +41,20 @@ public class ProductoService {
     }
 
     @Transactional
-    public ProductoEntity editar() {
-
+    public ProductoEntity editar(Long id, EditarProductoDTO dto) {
+        ProductoEntity producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id.toString()));
+        CategoriaEntity categoria = null;
+        if (dto.getCategoria() != null) {
+            categoria = categoriaRepository.findById(dto.getCategoria().getId()).orElseThrow(
+                    () -> new CategoryNotFoundException(dto.getCategoria().getId().toString()));
+        }
+        producto.setCategoria(categoria);
+        producto.setNombre(dto.getNombre());
+        producto.setDescripcion(dto.getDescripcion());
+        producto.setPrecio(dto.getPrecio());
+        producto.setStock(dto.getStock());
+        producto.setActivo(dto.getActivo());
+        return productoRepository.save(producto);
     }
 }

@@ -6,10 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import shaddai.backend.dtos.ErrorResponseDTO;
-import shaddai.backend.exceptions.CategoryAlreadyExistsException;
-import shaddai.backend.exceptions.CategoryNotFoundException;
-import shaddai.backend.exceptions.UserNameAlreadyExistsException;
-import shaddai.backend.exceptions.UserNotFoundException;
+import shaddai.backend.exceptions.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -49,5 +46,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleCategoryNotFound(CategoryNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponseDTO("CATEGORY_NOT_FOUND", ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleProductNotFound(ProductNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("PRODUCT_NOT_FOUND", ex.getMessage(), null));
     }
 }

@@ -5,7 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shaddai.backend.dtos.auth.RegisterDTO;
-import shaddai.backend.dtos.auth.RegisteResponse;
+import shaddai.backend.dtos.auth.RegisterResponse;
 import shaddai.backend.entities.UsuarioEntity;
 import shaddai.backend.exceptions.UserNameAlreadyExistsException;
 import shaddai.backend.exceptions.UserNotFoundException;
@@ -27,7 +27,7 @@ public class UsuarioService {
     }
 
     @Transactional
-    public RegisteResponse register(RegisterDTO dto) {
+    public RegisterResponse register(RegisterDTO dto) {
         if (usuarioRepository.existsByUsername(dto.getUsername())) {
             throw new UserNameAlreadyExistsException(dto.getUsername());
         }
@@ -40,7 +40,7 @@ public class UsuarioService {
         usuario.setPassword(encoder.encode(dto.getPassword()));
         usuario = usuarioRepository.save(usuario);
 
-        return new RegisteResponse(
+        return new RegisterResponse(
                 usuario.getId(),
                 usuario.getUsername(),
                 usuario.getNombre(),

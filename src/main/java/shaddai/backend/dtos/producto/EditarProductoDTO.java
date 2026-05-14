@@ -7,24 +7,28 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import shaddai.backend.entities.CategoriaEntity;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CrearProductoDTO {
-
-    @NotBlank(message = "El nombre es obligatorio")
-    private String nombre;
-
+public class EditarProductoDTO {
     private Categoria categoria;
 
-    @NotBlank(message = "La descripción es obligatoria")
+    @NotBlank(message = "El nombre no puede ser vacío")
+    private String nombre;
+
+    @NotBlank(message = "La descripción no puede ser vacía")
     private String descripcion;
 
-    @NotNull(message = "El precio es obligatorio")
+    @NotNull(message = "El precio no puede ser nulo")
     @DecimalMin(value = "0.1", message = "El precio mínimo es S/ 0.10")
     private double precio;
 
+    @NotNull(message = "El stock no puede ser nulo")
     @Min(value = 0, message = "El stock no puede ser menor a 0")
     private Integer stock;
+
+    @NotNull(message = "El estado no puede ser nulo")
+    private Boolean activo;
 }

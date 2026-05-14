@@ -59,4 +59,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponseDTO("VALIDATION_ERROR", ex.getMessage(), null));
     }
+
+    @ExceptionHandler(InvalidDateException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidDate(InvalidDateException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO("VALIDATION_ERROR", ex.getMessage(), null));
+    }
 }

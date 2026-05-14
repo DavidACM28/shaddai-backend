@@ -1,5 +1,9 @@
 package shaddai.backend.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shaddai.backend.dtos.UsuarioDTO;
@@ -11,12 +15,16 @@ import shaddai.backend.entities.AuditoriaInventarioEntity;
 import shaddai.backend.entities.ProductoEntity;
 import shaddai.backend.entities.UsuarioEntity;
 import shaddai.backend.exceptions.InvalidActionException;
+import shaddai.backend.exceptions.InvalidDateException;
 import shaddai.backend.exceptions.ProductNotFoundException;
 import shaddai.backend.exceptions.UserNotFoundException;
 import shaddai.backend.repositories.AuditoriaInventarioRepository;
 import shaddai.backend.repositories.ProductoRepository;
 import shaddai.backend.repositories.UsuarioRepository;
 import shaddai.backend.utils.Accion;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 @Service
 public class AuditoriaInventarioService {
@@ -39,7 +47,7 @@ public class AuditoriaInventarioService {
                 orElseThrow(() -> new UserNotFoundException(dto.getUsuarioId().toString()));
         Accion accion;
         try {
-             accion = Accion.valueOf(dto.getAccion().toUpperCase());
+            accion = Accion.valueOf(dto.getAccion().toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new InvalidActionException(dto.getAccion());
         }
@@ -55,22 +63,51 @@ public class AuditoriaInventarioService {
         return toResponse(auditoriaInventarioRepository.save(auditoria));
     }
 
-    private AuditoriaInventarioResponse toResponse(AuditoriaInventarioEntity auditoria) {
-        CategoriaResponse categoria =
-                new CategoriaResponse(
-                        auditoria.getProducto().getCategoria().getId(),
-                        auditoria.getProducto().getCategoria().getNombre(),
-                        auditoria.getProducto().getCategoria().isActivo());
+    @Transactional(readOnly = true)
+    public Page<AuditoriaInventarioResponse> findAll(
+            int page, int size, String nombre, String tipo, String fechaDesde, String fechaHasta) {
 
-        ProductoResponse producto =
-                new ProductoResponse(
-                        auditoria.getProducto().getId(),
-                        categoria,
-                        auditoria.getProducto().getNombre(),
-                        auditoria.getProducto().getDescripcion(),
-                        auditoria.getProducto().getPrecio(),
-                        auditoria.getProducto().getStock(),
-                        auditoria.getProducto().isActivo());
+        LocalDate desde;
+        LocalDate hasta;
+
+        Specification<AuditoriaInventarioEntity> specification = Specification.where((root, query, cb) -> cb.conjunction());
+
+        if (nombre != null) {
+            specification = specification.and((root, query, cb) -> cb.like(root.get("producto").get("nombre"), "%" + nombre + "%"));
+        }
+
+        if (tipo != null) {
+            if (tipo.equals("ENTRADA")) {
+                specification = specification.and((root, query, cb) -> cb.lessThan(root.get("stockAntiguo"), root.get("stockNuevo")));
+            }
+            if (tipo.equals("SALIDA")) {
+                specification = specification.and((root, query, cb) -> cb.greaterThan(root.get("stockAntiguo"), root.get("stockNuevo")));
+            }
+        }
+
+        if (fechaDesde != null) {
+            try {
+                desde = LocalDate.parse(fechaDesde);
+            } catch (DateTimeParseException e) {
+                throw new InvalidDateException(fechaDesde);
+            }
+            specification = specification.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("fecha"), desde));
+        }
+
+        if (fechaHasta != null) {
+            try {
+                hasta = LocalDate.parse(fechaHasta);
+            } catch (DateTimeParseException e) {
+                throw new InvalidDateException(fechaHasta);
+            }
+            specification = specification.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("fecha"), hasta));
+        }
+        Page<AuditoriaInventarioEntity> lista = auditoriaInventarioRepository.findAll(specification, PageRequest.of(page, size));
+        return new PageImpl<>(lista.getContent().stream().map(this::toResponse).toList(), PageRequest.of(page, size), lista.getTotalPages());
+    }
+
+    private AuditoriaInventarioResponse toResponse(AuditoriaInventarioEntity auditoria) {
+        ProductoResponse producto = getProductoResponse(auditoria);
 
         UsuarioDTO usuario =
                 new UsuarioDTO(
@@ -89,5 +126,22 @@ public class AuditoriaInventarioService {
                 auditoria.getStockNuevo(),
                 auditoria.getFecha(),
                 auditoria.getHora());
+    }
+
+    private ProductoResponse getProductoResponse(AuditoriaInventarioEntity auditoria) {
+        CategoriaResponse categoria =
+                new CategoriaResponse(
+                        auditoria.getProducto().getCategoria().getId(),
+                        auditoria.getProducto().getCategoria().getNombre(),
+                        auditoria.getProducto().getCategoria().isActivo());
+
+        return new ProductoResponse(
+                auditoria.getProducto().getId(),
+                categoria,
+                auditoria.getProducto().getNombre(),
+                auditoria.getProducto().getDescripcion(),
+                auditoria.getProducto().getPrecio(),
+                auditoria.getProducto().getStock(),
+                auditoria.getProducto().isActivo());
     }
 }
